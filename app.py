@@ -5,6 +5,9 @@ import PyPDF2
 import io
 import numpy as np
 import base64
+import os
+import sys
+import subprocess
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -13,12 +16,29 @@ import tempfile
 from utils import get_suggestions, SKILL_MAP
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Load model
+# Check if model exists, train if not
+if not os.path.exists("model/tfidf.pkl") or not os.path.exists("model/clf.pkl"):
+    with st.spinner("Training model for the first time... This may take a minute."):
+        # Create model directory if it doesn't exist
+        os.makedirs("model", exist_ok=True)
+        
+        # Run training script
+        try:
+            import train
+            from importlib import reload
+            reload(train)
+            st.success("Model trained successfully!")
+        except Exception as e:
+            st.error(f"Error training model: {e}")
+            st.info("Please run 'python train.py' manually in your terminal.")
+
+# Now try to load the model
 try:
     tfidf = pickle.load(open("model/tfidf.pkl", "rb"))
     clf = pickle.load(open("model/clf.pkl", "rb"))
-except:
-    st.error("Model not found! Please run train.py first.")
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.info("Please ensure you have run 'python train.py' to create the model files.")
     st.stop()
 
 def clean_text(text):
