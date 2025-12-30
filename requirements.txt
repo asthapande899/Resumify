@@ -1,5 +1,7 @@
 streamlit
-scikit-learn
 pandas
 numpy
-PyPDF2c
+scikit-learn
+matplotlib
+seaborn
+nltk
