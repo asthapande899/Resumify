@@ -6,3 +6,4 @@ matplotlib
 seaborn
 nltk
 PyPDF2
+reportlab
